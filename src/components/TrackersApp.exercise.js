@@ -1,14 +1,20 @@
-import * as React from 'react'
-// 🐶 importe notre "base de données" de trackers
-// 🤖 import db from '../data'
+import {useState} from 'react'
+import db from '../data'
 
-// 🐶 créé les 3 states necessaires au composant 'TrackersApp'
 function TrackersApp() {
-  // 🐶 créé le state 'allTrackers' initialisé par defaut avec 'db'
-  // 🐶 créé le state 'filterText' initialisé par defaut avec ''
-  // 🐶 créé le state 'selectedTracker' initialisé par defaut avec un objet vide {}
+  const [allTrackers,setAllTrackers] = useState(db)
+  const [filterText,setFilterText] = useState('')
+  const [selectedTracker,setSelectedTracker] = useState({})
 
-  // 🐶 Affiche 'il y a X trackers' en utilisant le state 'allTrackers'
-  return <div></div>
+  return (
+    <>
+      <div>il y a {allTrackers.length} trackers</div>
+      <ul>
+        {allTrackers.map(tracker => (
+          <li key={tracker.id}>{tracker.name}</li>
+        ))}
+      </ul>
+    </>
+  )
 }
 export {TrackersApp}
