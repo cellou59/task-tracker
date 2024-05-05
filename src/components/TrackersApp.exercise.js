@@ -20,9 +20,9 @@ function TrackersApp() {
   return (
     <div>
       <FilterTrackers onTextChange={handleTextChange} />
-      {/* 🐶 passe les 2 props necessaires pour le tracker selectionné  */}
-      <TrackersTable trackers={allTrackers} />
+      <TrackersTable trackers={allTrackers} selectedTracker={selectedTracker} onSelectedTracker={(tracker) =>  setSelectedTracker(tracker)}  />
     </div>
+
   )
 }
 export {TrackersApp}
