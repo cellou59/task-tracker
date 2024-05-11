@@ -3,71 +3,128 @@ import * as React from 'react'
 import {v4 as uuidv4} from 'uuid'
 import {getDateTimeForPicker} from '../helper'
 
-// 🐶 Décommente la fontion "newTracker" qui te crée un objet tracker avec un
-// 'id' généré automatiquement et un 'starttime '
+const newTracker = () => ({
+  id: uuidv4(),
+  category: 'Défault',
+  starttime: getDateTimeForPicker(),
+  endtime: '',
+  name: '',
+})
 
-// const newTracker = () => ({
-//   id: uuidv4(),
-//   category: 'Défault',
-//   starttime: getDateTimeForPicker(),
-//   endtime: '',
-//   name: '',
-// })
+const TrackerEditForm = ({
+  selectedTracker = {...newTracker(), id: ''},
+  onAddTracker,
+  onDeleteTracker,
+  onUpdateTracker,
+}) => {
+  const [tracker, setTracker] = React.useState(selectedTracker)
 
-// 🐶 créé les 4 props 'selectedTracker', 'onAddTracker', 'onDeleteTracker' et 'onUpdateTracker'
-// initalise par défaut 🤖 `selectedTracker avec newTracker()` et surchage pour que l'id soit une string vide ""
-const TrackerEditForm = ({}) => {
-  // 🐶 créé un state 'tracker' initialisé avec 'selectedTracker'
+  const handleTrackerName = e => {
+    setTracker({...tracker, name: e.target.value})
+  }
+  const handleTrackerStartTime = e => {
+    setTracker({...tracker, starttime: e.target.value})
+  }
+  const handleTrackerEndTime = e => {
+    setTracker({...tracker, endtime: e.target.value})
+  }
+  const handleTrackerCategory = e => {
+    setTracker({...tracker, category: e.target.value})
+  }
+  const handleOnSubmit = e => {
+    e.preventDefault()
+    onAddTracker(tracker)
+  }
+  const handleUpdateTracker = () => {
+    onUpdateTracker(tracker)
+  }
+  const handleDeleteTracker = () => {
+    onDeleteTracker(tracker.id)
+  }
+  const handleNewTracker = () => {
+    setTracker(newTracker())
+  }
 
-  // 🐶 les 4 fonctions qui suivent sont appelé sur un changement de valeur dans le formulaire
-  // met à jour le state 'tracker' avec les nouvelle valeur du formulaire
-  const handleTrackerName = e => {}
-  const handleTrackerStartTime = e => {}
-  const handleTrackerEndTime = e => {}
-  const handleTrackerCategory = e => {}
+  React.useEffect(() => {
+    if (selectedTracker?.id !== '' && selectedTracker?.id !== tracker.id) {
+      setTracker(selectedTracker)
+    }
+  
+  }, [tracker, setTracker, selectedTracker])
 
-  // 🐶 créé une fonction 'handleOnSubmit' qui va appeler 'onAddTracker'
-  // ps : n'oublie pas le  e.preventDefault()
-
-  // 🐶 créé une fonction 'handleUpdateTracker' qui va appeler 'onUpdateTracker'
-
-  // 🐶 créé une fonction 'handleDeleteTracker' qui va appeler 'onDeleteTracker'
-
-  // 🐶 créé une fonction 'handleNewTracker' qui va mettre à jour le state tracker
-  // avec newTracker()
-
-  // 🐶 met à jour le state tracker quand 'selectedTracker' change de valeur.
-  // ceci ce produit lors d'un clique sur le tableau par exemple, une nouvelle
-  // valeur de 'selectedTracker' arrive et il faut mettre à jour le state.
-  // 🤖 utilise 'useEffect'
-  // conditionne la mise à jour du tracker si les ids sont differents et non vide
-  // 🤖 selectedTracker?.id !== '' && selectedTracker?.id !== tracker.id
-
-  // 🐶 On veut maintenant activer / desactiver les boutons / Champs input en fonction
-  // de l'état du tracker (pas de tracker à editer / tracker à editer )
-  // on se base sur l'id
-  // 🤖 créée const disabled
-  // si id vide 'disabled' est à true, false sinon
-  // met `disabled={disabled}` sur tous les champs <input< et <button> (sauf le boutton 'Nouveau Tracker')
+  const disabled = tracker.id === '' ? true : false
 
   return (
     <>
-      {/* 🐶 defini 'handleOnSubmit' sur l'event 'onSubmit' du formulaire */}
-      <form className="Form">
+      <form className="Form" onSubmit={handleOnSubmit}>
         <fieldset>
           <legend>Gestion des Trackers</legend>
-          {/* 🐶 créé un 'label' et 'input' type 'text' pour le tracker.name */}
-          {/* 🐶 créé un 'label' et 'input' type 'datetime-local' pour le tracker.starttime */}
-          {/* 🐶 créé un 'label' et 'input' type 'datetime-local' pour le tracker.endtime */}
-          {/* 🐶 créé un 'label' et 'select' 'option' pour le tracker.category */}
+          <label htmlFor="trackerName">Nom du tracker : </label>
+          <input
+            disabled={disabled}
+            type="text"
+            id="trackerName"
+            placeholder="Nom"
+            onChange={handleTrackerName}
+            value={tracker.name}
+          ></input>
 
+          <label htmlFor="trackerStartTime">Date de début :</label>
+          <input
+            disabled={disabled}
+            type="datetime-local"
+            id="trackerStartTime"
+            placeholder="Date JJ/MM/AAAA"
+            onChange={handleTrackerStartTime}
+            value={tracker.starttime}
+            step="2"
+          ></input>
+
+          <label htmlFor="trackerEndTime">Date de fin :</label>
+          <input
+            disabled={disabled}
+            type="datetime-local"
+            id="trackerEndTime"
+            placeholder="Date JJ/MM/AAAA"
+            onChange={handleTrackerEndTime}
+            value={tracker.endtime}
+            step="2"
+          ></input>
+
+          <label>
+            Categorie:
+            <select
+              disabled={disabled}
+              value={tracker.category}
+              onChange={handleTrackerCategory}
+            >
+              <option value="Sport">Sport</option>
+              <option value="Code">Code</option>
+              <option value="Perso">Perso</option>
+              <option value="Défaut">Défaut</option>
+            </select>
+          </label>
           <label>Actions</label>
           <div className="Action">
-            {/* 🐶 créé button 'Nouveau Tracker' avec 'onClick' = 'handleNewTracker' */}
-            {/* 🐶 créé button 'Ajouter' qui permet de soumettre le formulaire */}
-            {/* 🤖 utilise input type="submit"  */}
-            {/* 🐶 créé button 'Supprimer' avec 'onClick' = 'handleDeleteTracker' */}
-            {/* 🐶 créé button 'Mettre à jour' avec 'onClick' = 'handleUpdateTracker' */}
+            <input
+              type="button"
+              value="Nouveau tracker"
+              onClick={handleNewTracker}
+             
+            />
+            <input disabled={disabled} type="submit" value="Ajouter"/>
+            <input
+              type="button"
+              onClick={handleDeleteTracker}
+              value="Supprimer le tracker"
+             
+            />
+            <input
+              type="button"
+              onClick={handleUpdateTracker}
+              value="Modifier le tracker"
+              
+            />
           </div>
         </fieldset>
       </form>

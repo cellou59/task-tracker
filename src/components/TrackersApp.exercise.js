@@ -2,13 +2,13 @@
 import * as React from 'react'
 import {FilterTrackers} from './FilterTrackers'
 import {TrackersTable} from './TrackersTable'
-// 🐶 importe TrackerEditForm
+import {TrackerEditForm} from './TrackerEditForm'
 import db from '../data'
 
 function TrackersApp() {
   const [allTrackers, setAllTrackers] = React.useState(db)
   const [filterText, setFilterText] = React.useState('')
-  const [selectedTracker, setSelectedTracker] = React.useState({})
+  const [selectedTracker, setSelectedTracker] = React.useState()
 
   const handleTextChange = text => {
     setFilterText(text)
@@ -17,26 +17,45 @@ function TrackersApp() {
     )
     setAllTrackers(filteredTracker)
   }
+  const handleAddTracker = (newTracker) =>{
+    if(newTracker.name === '' ||  !!newTracker?.name) {
+      alert('veuillez renseigner le nom du tracker')
+      return
+    }
 
-  // 🐶 créé une fonctions 'handleAddTracker' qui prend en paramètre un 'tracker'
-  // et qui ajoute ce 'tracker' dans 'allTrackers' avec 'setAllTrackers'
-  // tu peux utiliser un spread opérator (ou solution équivalente) :
-  // 🤖 [...arrayExistant, nouvelElement]
-
-  // 🐶 créé une fonctions 'handleDeleteTracker' qui prend en paramètre un 'tracker'
-  // et qui supprime ce 'tracker' de 'allTrackers' en se basant dur l'id
-  // utilise 'filter' (ou solution équivalente) :
-  // 🤖 arrayExistant.filter((item) => item.id !== elementASupprimer.id)
-
-  // 🐶 créé une fonctions 'handleUpdateTracker' qui prend en paramètre un 'tracker'
-  // et qui met à jour ce 'tracker' dans 'allTrackers' en se basant dur l'id
-  // utilise 'map' (ou solution équivalente):
-  // 🤖 updatedArray = arrayExistant.map(item => item.id === elementAMaj.id ? elementAMaj : item)
-
+    setAllTrackers([...allTrackers,newTracker])
+  }
+  const handleDeleteTracker = (trackerId) =>{
+    if(!trackerId) {
+      alert('il manque le tracker id')
+      return
+    }
+    const filteredTracker = allTrackers.filter(tracker => tracker.id !== trackerId)
+    setAllTrackers(filteredTracker)
+  }
+  const handleUpdateTracker = (updatedTracker) =>{
+    let missingInfo = []
+     Object.entries(updatedTracker).forEach((prop) => {
+      const [key,value] = prop
+      if((!value || value ==='') && key !== 'endtime' ){
+        missingInfo.push(key)
+      }
+    })
+    if(missingInfo.length > 0) {
+      alert(`veuillez renseigner : ${missingInfo.join(', ')}`)
+    }
+    const updatedTrackers = allTrackers.map( tracker => tracker.id === updatedTracker.id ? updatedTracker :tracker )
+    setAllTrackers(updatedTrackers)
+  }
   return (
     <div>
       <FilterTrackers onTextChange={handleTextChange} />
-      {/* 🐶 appelle <TrackerEditForm> avec les 4 props utiles */}
+      <TrackerEditForm 
+        selectedTracker={selectedTracker} 
+        onAddTracker={handleAddTracker}
+        onDeleteTracker={handleDeleteTracker}
+        onUpdateTracker={handleUpdateTracker}
+      /> 
       <TrackersTable
         trackers={allTrackers}
         selectedTracker={selectedTracker}
